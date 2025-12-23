@@ -50,13 +50,13 @@ class OpenGLRenderer(private val width: Int = 800, private val height: Int = 600
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
         
-        // Create window
+        // Create a window
         window = glfwCreateWindow(width, height, "Wave Animation - JVM", NULL, NULL)
         if (window == NULL) {
             throw RuntimeException("Failed to create GLFW window")
         }
         
-        // Setup key callback
+        // Set up a key callback
         glfwSetKeyCallback(window) { win, key, _, action, _ ->
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(win, true)
@@ -103,7 +103,7 @@ class OpenGLRenderer(private val width: Int = 800, private val height: Int = 600
             100f
         )
         
-        // Setup view matrix
+        // Set up view matrix
         view.lookAt(
             cameraPos.x, cameraPos.y, cameraPos.z,
             0f, 0f, 0f,

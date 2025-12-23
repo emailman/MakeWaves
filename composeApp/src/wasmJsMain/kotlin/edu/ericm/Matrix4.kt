@@ -2,8 +2,8 @@ package edu.ericm
 
 import org.khronos.webgl.Float32Array
 import org.khronos.webgl.set
-import org.khronos.webgl.get
-import kotlin.math.*
+import kotlin.math.sqrt
+import kotlin.math.tan
 
 /**
  * 4x4 Matrix for 3D transformations in WebGL

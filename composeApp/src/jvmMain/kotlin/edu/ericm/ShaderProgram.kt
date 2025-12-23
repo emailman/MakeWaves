@@ -1,7 +1,6 @@
 package edu.ericm
 
 import org.lwjgl.opengl.GL20.*
-import org.lwjgl.opengl.GL32.*
 
 /**
  * Manages OpenGL shader programs

@@ -50,15 +50,16 @@ class WebGLRenderer {
     private val waterResolution = 50
     private val waterSize = 10f
 
+    @OptIn(ExperimentalWasmJsInterop::class)
     fun init() {
-        // Get or create canvas
+        // Get or create a canvas
         canvas = document.getElementById("ComposeTarget") as? HTMLCanvasElement
             ?: (document.createElement("canvas") as HTMLCanvasElement).also {
                 it.id = "ComposeTarget"
                 document.body?.appendChild(it)
             }
 
-        // Set canvas size to fill window
+        // Set canvas size to fill the window
         canvas.width = window.innerWidth
         canvas.height = window.innerHeight
 
@@ -117,16 +118,16 @@ class WebGLRenderer {
         )
 
         // Handle window resize
-        window.addEventListener("resize", {
+        window.addEventListener("resize") {
             canvas.width = window.innerWidth
             canvas.height = window.innerHeight
             gl.viewport(0, 0, canvas.width, canvas.height)
             val newAspect = canvas.width.toFloat() / canvas.height.toFloat()
             projection.perspective((PI / 4f).toFloat(), newAspect, 0.1f, 100f)
-        })
+        }
 
         // Handle key press for reset and wireframe toggle
-        window.addEventListener("keydown", { event ->
+        window.addEventListener("keydown") { event ->
             val keyEvent = event as KeyboardEvent
             if (keyEvent.key == "r" || keyEvent.key == "R") {
                 animationController.reset()
@@ -135,13 +136,14 @@ class WebGLRenderer {
                 wireframeMode = !wireframeMode
                 println("Wireframe mode: $wireframeMode")
             }
-        })
+        }
 
         println("WebGL Renderer initialized (WASM)!")
         println("Press R to reset animation")
         println("Press W to toggle wireframe mode")
     }
 
+    @OptIn(ExperimentalWasmJsInterop::class)
     private fun createProgram(vertexSource: String, fragmentSource: String): WebGLProgram {
         val vertexShader = compileShader(WebGLRenderingContext.VERTEX_SHADER, vertexSource)
         val fragmentShader = compileShader(WebGLRenderingContext.FRAGMENT_SHADER, fragmentSource)
@@ -162,6 +164,7 @@ class WebGLRenderer {
         return program
     }
 
+    @OptIn(ExperimentalWasmJsInterop::class)
     private fun compileShader(type: Int, source: String): WebGLShader {
         val shader = gl.createShader(type)!!
         gl.shaderSource(shader, source)
@@ -288,7 +291,7 @@ class WebGLRenderer {
         bindAttribute(program, "aNormal", sphereNormalBuffer!!, 3)
 
         if (wireframeMode) {
-            // Draw wireframe with lines
+            // Draw a wireframe with lines
             gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, sphereLineIndexBuffer)
             gl.drawElements(WebGLRenderingContext.LINES, sphereLineIndexCount, WebGLRenderingContext.UNSIGNED_INT, 0)
         } else {
@@ -339,7 +342,7 @@ class WebGLRenderer {
         bindAttribute(program, "aNormal", waterNormalBuffer!!, 3)
 
         if (wireframeMode) {
-            // Draw wireframe with lines
+            // Draw a wireframe with lines
             gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, waterLineIndexBuffer)
             gl.drawElements(WebGLRenderingContext.LINES, waterLineIndexCount, WebGLRenderingContext.UNSIGNED_INT, 0)
         } else {

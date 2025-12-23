@@ -14,12 +14,12 @@ class PhysicsSimulation {
         
         if (!state.hasHitWater) {
             // Apply gravity while falling
-            newVelocity = newVelocity + Vector3(0f, AnimationState.GRAVITY * deltaTime, 0f)
+            newVelocity += Vector3(0f, AnimationState.GRAVITY * deltaTime, 0f)
             
             // Update position
-            newPosition = newPosition + newVelocity * deltaTime
+            newPosition += newVelocity * deltaTime
             
-            // Check if sphere hit water surface
+            // Check if the sphere hit the water surface
             if (newPosition.y - state.sphereRadius <= AnimationState.WATER_LEVEL) {
                 hasHit = true
                 impactTime = state.currentTime + deltaTime
@@ -37,10 +37,10 @@ class PhysicsSimulation {
             }
         } else {
             // Sphere is sinking after impact - continuously sink forever
-            newPosition = newPosition + newVelocity * deltaTime
+            newPosition += newVelocity * deltaTime
             
             // Less deceleration so it sinks faster for longer
-            newVelocity = newVelocity * 0.995f
+            newVelocity *= 0.995f
         }
         
         return AnimationState(

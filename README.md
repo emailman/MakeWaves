@@ -1,55 +1,139 @@
-This is a Kotlin Multiplatform project targeting Web, Desktop (JVM).
+# Make Waves
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A Kotlin Multiplatform 3D wave animation demonstrating a sphere falling into water and creating realistic ripple effects. The project runs on Desktop (JVM with OpenGL) and Web (WebAssembly with WebGL).
 
-### Build and Run Desktop (JVM) Application
+## Features
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+- Real-time 3D graphics rendering with OpenGL (Desktop) and WebGL (Web)
+- Physics simulation for falling sphere with gravity
+- Procedural wave generation with circular ripples spreading from impact point
+- Wireframe rendering mode for visualizing mesh geometry
+- Automatic animation reset after completion
+- Cross-platform support: Windows, macOS, Linux, and modern web browsers
 
-### Build and Run Web Application
+## Demo
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+The animation shows:
+1. A red sphere falling from above
+2. Impact with a blue translucent water surface
+3. Circular waves radiating outward from the impact point
+4. The sphere slowly sinking beneath the surface
 
----
+## Controls
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+| Key | Action |
+|-----|--------|
+| `R` | Reset animation |
+| `W` | Toggle wireframe mode |
+| `ESC` | Exit (Desktop only) |
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## Requirements
+
+- JDK 17 or higher
+- Gradle 8.x (included via wrapper)
+
+## Running the Application
+
+### Desktop (JVM with OpenGL)
+
+```bash
+./gradlew :composeApp:run
+```
+
+On Windows:
+```cmd
+.\gradlew.bat :composeApp:run
+```
+
+### Web (WebAssembly)
+
+```bash
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+This starts a development server at `http://localhost:8080/`.
+
+## Building
+
+### Desktop Distribution
+
+```bash
+# Windows MSI
+./gradlew :composeApp:packageMsi
+
+# macOS DMG
+./gradlew :composeApp:packageDmg
+
+# Linux DEB
+./gradlew :composeApp:packageDeb
+```
+
+### Web Production Build
+
+```bash
+./gradlew :composeApp:wasmJsBrowserProductionWebpack
+```
+
+Output will be in `composeApp/build/dist/wasmJs/productionExecutable/`.
+
+## Project Structure
+
+```
+MakeWaves/
+├── composeApp/
+│   └── src/
+│       ├── commonMain/          # Shared code (physics, animation, math)
+│       │   └── kotlin/edu/ericm/
+│       │       ├── AnimationController.kt  # Animation state management
+│       │       ├── AnimationState.kt       # State data class
+│       │       ├── MeshGenerator.kt        # Procedural mesh generation
+│       │       ├── PhysicsSimulation.kt    # Gravity and collision
+│       │       ├── Vector3.kt              # 3D vector math
+│       │       └── WaveSimulation.kt       # Wave height calculations
+│       ├── jvmMain/             # Desktop-specific (OpenGL/LWJGL)
+│       │   └── kotlin/edu/ericm/
+│       │       ├── main.kt
+│       │       ├── OpenGLRenderer.kt
+│       │       └── Shaders.kt
+│       └── wasmJsMain/          # Web-specific (WebGL)
+│           ├── kotlin/edu/ericm/
+│           │   ├── main.kt
+│           │   ├── WebGLRenderer.kt
+│           │   ├── WebGLShaders.kt
+│           │   └── Matrix4.kt
+│           └── resources/
+│               └── index.html
+├── gradle/
+│   └── libs.versions.toml       # Version catalog
+└── build.gradle.kts
+```
+
+## Technology Stack
+
+- **Kotlin Multiplatform** 2.1.21
+- **Compose Multiplatform** 1.9.3
+- **LWJGL** 3.3.4 (Desktop OpenGL bindings)
+- **JOML** 1.10.8 (Java OpenGL Math Library)
+- **WebGL** (Browser rendering)
+- **Kotlin/Wasm** (WebAssembly compilation)
+
+## How It Works
+
+### Physics
+The sphere starts at position (0, 5, 0) and accelerates downward due to gravity (-9.8 m/s²). Upon hitting the water surface at y=0, it records the impact position and begins sinking slowly.
+
+### Wave Simulation
+Waves are calculated using the formula:
+- Wave radius expands at a constant speed from impact point
+- Height follows a damped sine wave pattern
+- Multiple overlapping wave rings create a more realistic effect
+- Amplitude decreases with time (exponential damping) and distance
+
+### Rendering
+Both platforms use similar shader programs:
+- Vertex shader: Transforms 3D positions and calculates lighting normals
+- Fragment shaders: Phong lighting for sphere, semi-transparent blue for water, solid color for wireframe
+
+## License
+
+MIT License

@@ -5,6 +5,7 @@ import kotlinx.browser.window
 import org.khronos.webgl.*
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.KeyboardEvent
+import kotlin.js.JsBoolean
 import kotlin.math.PI
 
 /**
@@ -50,7 +51,7 @@ class WebGLRenderer {
     private val waterResolution = 50
     private val waterSize = 10f
 
-    @OptIn(ExperimentalWasmJsInterop::class)
+    // @OptIn(ExperimentalWasmJsInterop::class)
     fun init() {
         // Get or create a canvas
         canvas = document.getElementById("ComposeTarget") as? HTMLCanvasElement
@@ -143,7 +144,6 @@ class WebGLRenderer {
         println("Press W to toggle wireframe mode")
     }
 
-    @OptIn(ExperimentalWasmJsInterop::class)
     private fun createProgram(vertexSource: String, fragmentSource: String): WebGLProgram {
         val vertexShader = compileShader(WebGLRenderingContext.VERTEX_SHADER, vertexSource)
         val fragmentShader = compileShader(WebGLRenderingContext.FRAGMENT_SHADER, fragmentSource)
@@ -154,7 +154,7 @@ class WebGLRenderer {
         gl.linkProgram(program)
 
         val linkStatus = gl.getProgramParameter(program, WebGLRenderingContext.LINK_STATUS)
-        if (linkStatus == null || linkStatus == false.toJsBoolean()) {
+        if (linkStatus == null || !(linkStatus as JsBoolean).toBoolean()) {
             throw RuntimeException("Program link failed: ${gl.getProgramInfoLog(program)}")
         }
 
@@ -164,14 +164,13 @@ class WebGLRenderer {
         return program
     }
 
-    @OptIn(ExperimentalWasmJsInterop::class)
     private fun compileShader(type: Int, source: String): WebGLShader {
         val shader = gl.createShader(type)!!
         gl.shaderSource(shader, source)
         gl.compileShader(shader)
 
         val compileStatus = gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS)
-        if (compileStatus == null || compileStatus == false.toJsBoolean()) {
+        if (compileStatus == null || !(compileStatus as JsBoolean).toBoolean()) {
             throw RuntimeException("Shader compile failed: ${gl.getShaderInfoLog(shader)}")
         }
 
